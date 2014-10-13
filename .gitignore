@@ -1,0 +1,6 @@
+/Binaries/
+/Intermediate/
+/Saved/
+*.opensdf
+*.sdf
+*.v12.suo
