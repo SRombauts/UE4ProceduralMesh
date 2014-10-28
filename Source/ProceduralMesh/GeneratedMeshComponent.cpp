@@ -3,6 +3,7 @@
 #include "ProceduralMesh.h"
 #include "DynamicMeshBuilder.h"
 #include "GeneratedMeshComponent.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 /** Vertex Buffer */
 class FGeneratedMeshVertexBuffer : public FVertexBuffer
@@ -12,8 +13,12 @@ public:
 
 	virtual void InitRHI()
 	{
+#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 3
 		FRHIResourceCreateInfo CreateInfo;
 		VertexBufferRHI = RHICreateVertexBuffer(Vertices.Num() * sizeof(FDynamicMeshVertex), BUF_Static, CreateInfo);
+#else
+		VertexBufferRHI = RHICreateVertexBuffer(Vertices.Num() * sizeof(FDynamicMeshVertex), NULL, BUF_Static);
+#endif
 		// Copy the vertex data into the vertex buffer.
 		void* VertexBufferData = RHILockVertexBuffer(VertexBufferRHI, 0, Vertices.Num() * sizeof(FDynamicMeshVertex), RLM_WriteOnly);
 		FMemory::Memcpy(VertexBufferData, Vertices.GetTypedData(), Vertices.Num() * sizeof(FDynamicMeshVertex));
@@ -29,8 +34,12 @@ public:
 
 	virtual void InitRHI()
 	{
+#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 3
 		FRHIResourceCreateInfo CreateInfo;
 		IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), Indices.Num() * sizeof(int32), BUF_Static, CreateInfo);
+#else
+		IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), Indices.Num() * sizeof(int32), NULL, BUF_Static);
+#endif
 		// Write the indices to the index buffer.
 		void* Buffer = RHILockIndexBuffer(IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
 		FMemory::Memcpy(Buffer, Indices.GetTypedData(), Indices.Num() * sizeof(int32));
@@ -104,7 +113,11 @@ FPrimitiveSceneProxy* UGeneratedMeshComponent::CreateSceneProxy()
 	public:
 		FGeneratedMeshSceneProxy(UGeneratedMeshComponent* Component)
 			: FPrimitiveSceneProxy(Component)
+#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
+			, MaterialRelevance(Component->GetMaterialRelevance(GetScene()->GetFeatureLevel()))
+#else
 			, MaterialRelevance(Component->GetMaterialRelevance())
+#endif
 		{
 			const FColor VertexColor(255, 255, 255);
 
@@ -171,9 +184,8 @@ FPrimitiveSceneProxy* UGeneratedMeshComponent::CreateSceneProxy()
 
 			const bool bWireframe = View->Family->EngineShowFlags.Wireframe;
 
-			FColoredMaterialRenderProxy WireframeMaterialInstance(
-				WITH_EDITOR ? GEngine->WireframeMaterial->GetRenderProxy(IsSelected()) : NULL,
-				//GEngine->WireframeMaterial->GetRenderProxy(IsSelected()),
+			auto WireframeMaterialInstance = new FColoredMaterialRenderProxy(
+				GEngine->WireframeMaterial ? GEngine->WireframeMaterial->GetRenderProxy(IsSelected()) : NULL,
 				FLinearColor(0, 0.5f, 1.f)
 				);
 
@@ -194,7 +206,11 @@ FPrimitiveSceneProxy* UGeneratedMeshComponent::CreateSceneProxy()
 			Mesh.bWireframe = bWireframe;
 			Mesh.VertexFactory = &VertexFactory;
 			Mesh.MaterialRenderProxy = MaterialProxy;
-			BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true, false); // TODO false=bUseEditorDepthTests?
+#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
+			BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true, UseEditorDepthTest());
+#else
+			BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true);
+#endif
 			BatchElement.FirstIndex = 0;
 			BatchElement.NumPrimitives = IndexBuffer.Indices.Num() / 3;
 			BatchElement.MinVertexIndex = 0;
@@ -344,8 +360,8 @@ void UGeneratedMeshComponent::UpdateCollision()
 		UpdateBodySetup();
 		CreatePhysicsState();
 
-		ModelBodySetup->InvalidatePhysicsData(); // Will not work in Packaged build
-		// Epic needs to add support for this
+		// Works in Packaged build only since UE4.5:
+		ModelBodySetup->InvalidatePhysicsData();
 		ModelBodySetup->CreatePhysicsMeshes();
 	}
 }
