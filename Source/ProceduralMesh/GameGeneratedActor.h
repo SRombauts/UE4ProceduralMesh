@@ -14,5 +14,7 @@ class PROCEDURALMESH_API AGameGeneratedActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-	void Lathe(const TArray<FVector>& points, TArray<FGeneratedMeshTriangle>& triangles, int segments = 64);
+private:
+	void Triangle(TArray<FGeneratedMeshTriangle>& triangles);
+	void Lathe(const TArray<FVector>& points, TArray<FGeneratedMeshTriangle>& triangles, int segments);
 };

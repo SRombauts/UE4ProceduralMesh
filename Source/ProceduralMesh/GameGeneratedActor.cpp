@@ -8,28 +8,45 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 {
 	TSubobjectPtr<UGeneratedMeshComponent> mesh = PCIP.CreateDefaultSubobject<UGeneratedMeshComponent>(this, TEXT("GeneratedMesh"));
 
+	TArray<FGeneratedMeshTriangle> triangles;
+
 	// Contains the points describing the polyline we are going to rotate
 	TArray<FVector> points;
 
-	points.Add(FVector(20, 5, 0));
-	points.Add(FVector(15, 6, 0));
-	points.Add(FVector(12, 7, 0));
-	points.Add(FVector(11, 8, 0));
-	points.Add(FVector(8, 7, 0));
-	points.Add(FVector(7, 6, 0));
-	points.Add(FVector(4, 5, 0));
-	points.Add(FVector(3, 4, 0));
-	points.Add(FVector(2, 3, 0));
-	points.Add(FVector(1, 4, 0));
+	points.Add(FVector(200, 50, 0));
+	points.Add(FVector(150, 60, 0));
+	points.Add(FVector(120, 70, 0));
+	points.Add(FVector(110, 80, 0));
+	points.Add(FVector(80, 70, 0));
+	points.Add(FVector(70, 60, 0));
+	points.Add(FVector(40, 50, 0));
+	points.Add(FVector(30, 40, 0));
+	points.Add(FVector(20, 30, 0));
+	points.Add(FVector(10, 40, 0));
 
 
-	TArray<FGeneratedMeshTriangle> triangles;
+	// Generate a lathe
 	Lathe(points, triangles, 128);
+	// Generate a single triangle
+//	Triangle(triangles);
+
 	mesh->SetGeneratedMeshTriangles(triangles);
 
 	RootComponent = mesh;
 }
 
+
+// Generate a single horizontal triangle counterclockwise to point up (invisible from the bottom)
+void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
+{
+	FGeneratedMeshTriangle triangle;
+	triangle.Vertex0.Set(100.f, -80.f, -60.f);
+	triangle.Vertex1.Set(100.f,  80.f, -30.f);
+	triangle.Vertex2.Set(200.f,   0.f,   0.f);
+	triangles.Add(triangle);
+}
+
+// Generate a lathe by rotating the given polyline
 void AGameGeneratedActor::Lathe(const TArray<FVector>& points, TArray<FGeneratedMeshTriangle>& triangles, int segments)
 {
 	UE_LOG(LogClass, Log, TEXT("AGameGeneratedActor::Lathe POINTS %d"), points.Num());
