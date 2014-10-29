@@ -1,6 +1,6 @@
 // UE4 Procedural Mesh Generation from the Epic Wiki (https://wiki.unrealengine.com/Procedural_Mesh_Generation)
 //
-// forked from "Engine/Plugins/Runtime/GeneratedMeshComponent/Source/GeneratedMeshComponent/Private/GeneratedMeshComponent.cpp"
+// forked from "Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Private/CustomMeshComponent.cpp"
 
 #include "ProceduralMesh.h"
 #include "DynamicMeshBuilder.h"
@@ -310,7 +310,7 @@ bool UGeneratedMeshComponent::SetGeneratedMeshTriangles(const TArray<FGeneratedM
 FPrimitiveSceneProxy* UGeneratedMeshComponent::CreateSceneProxy()
 {
 	FPrimitiveSceneProxy* Proxy = NULL;
-	// Only create if have enough tris
+	// Only if have enough triangles
 	if(GeneratedMeshTris.Num() > 0)
 	{
 		Proxy = new FGeneratedMeshSceneProxy(this);
@@ -326,43 +326,51 @@ int32 UGeneratedMeshComponent::GetNumMaterials() const
 
 FBoxSphereBounds UGeneratedMeshComponent::CalcBounds(const FTransform & LocalToWorld) const
 {
-	// Minimum Vector: It's set to the first vertex's position initially (NULL == FVector::ZeroVector might be required and a known vertex vector has intrinsically valid values)
-	FVector vecMin = GeneratedMeshTris[0].Vertex0;
-
-	// Maximum Vector: It's set to the first vertex's position initially (NULL == FVector::ZeroVector might be required and a known vertex vector has intrinsically valid values)
-	FVector vecMax = GeneratedMeshTris[0].Vertex0;
-
-	// Get maximum and minimum X, Y and Z positions of vectors
-	for(int32 TriIdx = 0; TriIdx < GeneratedMeshTris.Num(); TriIdx++)
+	// Only if have enough triangles
+	if(GeneratedMeshTris.Num() > 0)
 	{
-		vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex0.X) ? GeneratedMeshTris[TriIdx].Vertex0.X : vecMin.X;
-		vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex1.X) ? GeneratedMeshTris[TriIdx].Vertex1.X : vecMin.X;
-		vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex2.X) ? GeneratedMeshTris[TriIdx].Vertex2.X : vecMin.X;
+		// Minimum Vector: It's set to the first vertex's position initially (NULL == FVector::ZeroVector might be required and a known vertex vector has intrinsically valid values)
+		FVector vecMin = GeneratedMeshTris[0].Vertex0;
 
-		vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex0.Y) ? GeneratedMeshTris[TriIdx].Vertex0.Y : vecMin.Y;
-		vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex1.Y) ? GeneratedMeshTris[TriIdx].Vertex1.Y : vecMin.Y;
-		vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex2.Y) ? GeneratedMeshTris[TriIdx].Vertex2.Y : vecMin.Y;
+		// Maximum Vector: It's set to the first vertex's position initially (NULL == FVector::ZeroVector might be required and a known vertex vector has intrinsically valid values)
+		FVector vecMax = GeneratedMeshTris[0].Vertex0;
 
-		vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex0.Z) ? GeneratedMeshTris[TriIdx].Vertex0.Z : vecMin.Z;
-		vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex1.Z) ? GeneratedMeshTris[TriIdx].Vertex1.Z : vecMin.Z;
-		vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex2.Z) ? GeneratedMeshTris[TriIdx].Vertex2.Z : vecMin.Z;
+		// Get maximum and minimum X, Y and Z positions of vectors
+		for(int32 TriIdx = 0; TriIdx < GeneratedMeshTris.Num(); TriIdx++)
+		{
+			vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex0.X) ? GeneratedMeshTris[TriIdx].Vertex0.X : vecMin.X;
+			vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex1.X) ? GeneratedMeshTris[TriIdx].Vertex1.X : vecMin.X;
+			vecMin.X = (vecMin.X > GeneratedMeshTris[TriIdx].Vertex2.X) ? GeneratedMeshTris[TriIdx].Vertex2.X : vecMin.X;
 
-		vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex0.X) ? GeneratedMeshTris[TriIdx].Vertex0.X : vecMax.X;
-		vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex1.X) ? GeneratedMeshTris[TriIdx].Vertex1.X : vecMax.X;
-		vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex2.X) ? GeneratedMeshTris[TriIdx].Vertex2.X : vecMax.X;
+			vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex0.Y) ? GeneratedMeshTris[TriIdx].Vertex0.Y : vecMin.Y;
+			vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex1.Y) ? GeneratedMeshTris[TriIdx].Vertex1.Y : vecMin.Y;
+			vecMin.Y = (vecMin.Y > GeneratedMeshTris[TriIdx].Vertex2.Y) ? GeneratedMeshTris[TriIdx].Vertex2.Y : vecMin.Y;
 
-		vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex0.Y) ? GeneratedMeshTris[TriIdx].Vertex0.Y : vecMax.Y;
-		vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex1.Y) ? GeneratedMeshTris[TriIdx].Vertex1.Y : vecMax.Y;
-		vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex2.Y) ? GeneratedMeshTris[TriIdx].Vertex2.Y : vecMax.Y;
+			vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex0.Z) ? GeneratedMeshTris[TriIdx].Vertex0.Z : vecMin.Z;
+			vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex1.Z) ? GeneratedMeshTris[TriIdx].Vertex1.Z : vecMin.Z;
+			vecMin.Z = (vecMin.Z > GeneratedMeshTris[TriIdx].Vertex2.Z) ? GeneratedMeshTris[TriIdx].Vertex2.Z : vecMin.Z;
 
-		vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex0.Z) ? GeneratedMeshTris[TriIdx].Vertex0.Z : vecMax.Z;
-		vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex1.Z) ? GeneratedMeshTris[TriIdx].Vertex1.Z : vecMax.Z;
-		vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex2.Z) ? GeneratedMeshTris[TriIdx].Vertex2.Z : vecMax.Z;
+			vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex0.X) ? GeneratedMeshTris[TriIdx].Vertex0.X : vecMax.X;
+			vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex1.X) ? GeneratedMeshTris[TriIdx].Vertex1.X : vecMax.X;
+			vecMax.X = (vecMax.X < GeneratedMeshTris[TriIdx].Vertex2.X) ? GeneratedMeshTris[TriIdx].Vertex2.X : vecMax.X;
+
+			vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex0.Y) ? GeneratedMeshTris[TriIdx].Vertex0.Y : vecMax.Y;
+			vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex1.Y) ? GeneratedMeshTris[TriIdx].Vertex1.Y : vecMax.Y;
+			vecMax.Y = (vecMax.Y < GeneratedMeshTris[TriIdx].Vertex2.Y) ? GeneratedMeshTris[TriIdx].Vertex2.Y : vecMax.Y;
+
+			vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex0.Z) ? GeneratedMeshTris[TriIdx].Vertex0.Z : vecMax.Z;
+			vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex1.Z) ? GeneratedMeshTris[TriIdx].Vertex1.Z : vecMax.Z;
+			vecMax.Z = (vecMax.Z < GeneratedMeshTris[TriIdx].Vertex2.Z) ? GeneratedMeshTris[TriIdx].Vertex2.Z : vecMax.Z;
+		}
+
+		FVector vecOrigin = ((vecMax - vecMin) / 2) + vecMin;	/* Origin = ((Max Vertex's Vector - Min Vertex's Vector) / 2 ) + Min Vertex's Vector */
+		FVector BoxPoint = vecMax - vecMin;			/* The difference between the "Maximum Vertex" and the "Minimum Vertex" is our actual Bounds Box */
+		return FBoxSphereBounds(vecOrigin, BoxPoint, BoxPoint.Size()).TransformBy(LocalToWorld);
 	}
-
-	FVector vecOrigin = ((vecMax - vecMin) / 2) + vecMin;	/* Origin = ((Max Vertex's Vector - Min Vertex's Vector) / 2 ) + Min Vertex's Vector */
-	FVector BoxPoint = vecMax - vecMin;			/* The difference between the "Maximum Vertex" and the "Minimum Vertex" is our actual Bounds Box */
-	return FBoxSphereBounds(vecOrigin, BoxPoint, BoxPoint.Size()).TransformBy(LocalToWorld);
+	else
+	{
+		return FBoxSphereBounds();
+	}
 }
 
 
