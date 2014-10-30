@@ -40,9 +40,9 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
 {
 	FGeneratedMeshTriangle triangle;
-	triangle.Vertex0.Set(100.f, -80.f, -60.f);
-	triangle.Vertex1.Set(100.f,  80.f, -30.f);
-	triangle.Vertex2.Set(200.f,   0.f,   0.f);
+	triangle.Vertex0.Position.Set(100.f, -80.f, -60.f);
+	triangle.Vertex1.Position.Set(100.f,  80.f, -30.f);
+	triangle.Vertex2.Position.Set(200.f,   0.f,   0.f);
 	triangles.Add(triangle);
 }
 
@@ -102,27 +102,27 @@ void AGameGeneratedActor::Lathe(const TArray<FVector>& points, TArray<FGenerated
 
 			if(i == 0)
 			{
-				tri.Vertex0 = p1;
-				tri.Vertex1 = p0;
-				tri.Vertex2 = p1r;
+				tri.Vertex0.Position = p1;
+				tri.Vertex1.Position = p0;
+				tri.Vertex2.Position = p1r;
 				triangles.Add(tri);
 			}
 
-			tri.Vertex0 = p1;
-			tri.Vertex1 = p1r;
-			tri.Vertex2 = p2;
+			tri.Vertex0.Position = p1;
+			tri.Vertex1.Position = p1r;
+			tri.Vertex2.Position = p2;
 			triangles.Add(tri);
 
-			tri.Vertex0 = p2;
-			tri.Vertex1 = p1r;
-			tri.Vertex2 = p2r;
+			tri.Vertex0.Position = p2;
+			tri.Vertex1.Position = p1r;
+			tri.Vertex2.Position = p2r;
 			triangles.Add(tri);
 
 			if(i == points.Num() - 2)
 			{
-				tri.Vertex0 = p2;
-				tri.Vertex1 = p2r;
-				tri.Vertex2 = pLast;
+				tri.Vertex0.Position = p2;
+				tri.Vertex1.Position = p2r;
+				tri.Vertex2.Position = pLast;
 				triangles.Add(tri);
 				wp[i + 1] = p2r;
 			}

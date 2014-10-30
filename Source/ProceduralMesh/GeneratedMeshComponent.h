@@ -7,18 +7,36 @@
 #include "GeneratedMeshComponent.generated.h"
 
 USTRUCT(BlueprintType)
+struct FVertex
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Triangle)
+	FVector Position;
+
+	UPROPERTY(EditAnywhere, Category = Triangle)
+	FColor Color;
+
+	UPROPERTY(EditAnywhere, Category = Triangle)
+	float U;
+
+	UPROPERTY(EditAnywhere, Category=Triangle)
+	float V;
+};
+
+USTRUCT(BlueprintType)
 struct FGeneratedMeshTriangle
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVector Vertex0;
+	FVertex Vertex0;
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVector Vertex1;
+	FVertex Vertex1;
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVector Vertex2;
+	FVertex Vertex2;
 };
 
 /** Component that allows you to specify custom triangle mesh geometry */
