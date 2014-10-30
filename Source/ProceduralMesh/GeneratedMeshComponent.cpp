@@ -156,7 +156,8 @@ public:
 		VertexFactory.ReleaseResource();
 	}
 
-	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
+#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
+    virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
 	{
 		QUICK_SCOPE_CYCLE_COUNTER( STAT_GeneratedMeshSceneProxy_GetDynamicMeshElements );
 
@@ -204,6 +205,7 @@ public:
 			}
 		}
 	}
+#endif
 
 	virtual void DrawDynamicElements(FPrimitiveDrawInterface* PDI, const FSceneView* View)
 	{
