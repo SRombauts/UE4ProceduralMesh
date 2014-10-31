@@ -30,6 +30,9 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 	// Generate a single triangle
 //	Triangle(triangles);
 
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));
+	mesh->SetMaterial(0, Material.Object);
+
 	mesh->SetGeneratedMeshTriangles(triangles);
 
 	RootComponent = mesh;
@@ -41,8 +44,12 @@ void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
 {
 	FGeneratedMeshTriangle triangle;
 	triangle.Vertex0.Position.Set(100.f, -80.f, -60.f);
-	triangle.Vertex1.Position.Set(100.f,  80.f, -30.f);
-	triangle.Vertex2.Position.Set(200.f,   0.f,   0.f);
+	triangle.Vertex1.Position.Set(100.f, 80.f, -30.f);
+	triangle.Vertex2.Position.Set(200.f, 0.f, 0.f);
+	static const FColor Blue(51, 51, 255);
+	triangle.Vertex0.Color = Blue;
+	triangle.Vertex2.Color = Blue;
+	triangle.Vertex2.Color = Blue;
 	triangles.Add(triangle);
 }
 
@@ -99,6 +106,11 @@ void AGameGeneratedActor::Lathe(const TArray<FVector>& points, TArray<FGenerated
 			FVector p2 = wp[i + 1];
 			FVector p1r(p1.X, p1.Y*cosA - p1.Z*sinA, p1.Y*sinA + p1.Z*cosA);
 			FVector p2r(p2.X, p2.Y*cosA - p2.Z*sinA, p2.Y*sinA + p2.Z*cosA);
+
+			static const FColor Red(255, 51, 51);
+			tri.Vertex0.Color = Red;
+			tri.Vertex1.Color = Red;
+			tri.Vertex2.Color = Red;
 
 			if(i == 0)
 			{
