@@ -8,7 +8,9 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 {
 	TSubobjectPtr<UGeneratedMeshComponent> mesh = PCIP.CreateDefaultSubobject<UGeneratedMeshComponent>(this, TEXT("GeneratedMesh"));
 
-	TArray<FGeneratedMeshTriangle> triangles;
+	// Apply a material
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));
+	mesh->SetMaterial(0, Material.Object);
 
 	// Contains the points describing the polyline we are going to rotate
 	TArray<FVector> points;
@@ -24,20 +26,17 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 	points.Add(FVector(20, 30, 0));
 	points.Add(FVector(10, 40, 0));
 
+	TArray<FGeneratedMeshTriangle> triangles;
 
 	// Generate a lathe
 	Lathe(points, triangles, 128);
 	// Generate a single triangle
 //	Triangle(triangles);
 
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));
-	mesh->SetMaterial(0, Material.Object);
-
 	mesh->SetGeneratedMeshTriangles(triangles);
 
 	RootComponent = mesh;
 }
-
 
 // Generate a single horizontal triangle counterclockwise to point up (invisible from the bottom)
 void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
@@ -48,7 +47,7 @@ void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
 	triangle.Vertex2.Position.Set(200.f, 0.f, 0.f);
 	static const FColor Blue(51, 51, 255);
 	triangle.Vertex0.Color = Blue;
-	triangle.Vertex2.Color = Blue;
+	triangle.Vertex1.Color = Blue;
 	triangle.Vertex2.Color = Blue;
 	triangles.Add(triangle);
 }
