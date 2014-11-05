@@ -12,8 +12,17 @@ UE4 Procedural MeshGeneration from the Epic Wiki, using C++ code and Blueprints
 
 ## C++ Code
 
-- UGeneratedMeshComponent, using FGeneratedMeshTriangle
-- AGameGeneratedActor spwaning an example mesh
+- UProceduralMeshComponent, using FProceduralMeshTriangle, composed of FProceduralMeshVertex 
+- AProceduralTriangleActor spwaning an simple triangle mesh with UV and a base color material applied that can be changed at runtime
+- AProceduralLatheActor spwaning an example "Lathe" mesh from rotating a Polyline, with another base color applied
+
+## Blueprints
+
+Basic blueprints are created from the C++ Procedural Actor classes.
+This help demonstrating how they can be spawned manually in the level at construction time.
+Then a new Material can be applied to the generated meshes (the triangle have correct UV for applying textures)
+- BP_ProceduralTriangle
+- BP_ProceduralLathe
 
 ## Level Blueprint
 

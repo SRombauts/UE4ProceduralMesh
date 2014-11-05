@@ -1,12 +1,15 @@
 // UE4 Procedural Mesh Generation from the Epic Wiki (https://wiki.unrealengine.com/Procedural_Mesh_Generation)
+//
+// A lathed object is a 3D model whose vertex geometry is produced by rotating a set of points around a fixed axis.
+// (from Wikipedia http://en.wikipedia.org/wiki/Lathe_(graphics))
 
 #include "ProceduralMesh.h"
-#include "GameGeneratedActor.h"
+#include "ProceduralLatheActor.h"
 
-AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializeProperties& PCIP)
+AProceduralLatheActor::AProceduralLatheActor(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
-	TSubobjectPtr<UGeneratedMeshComponent> mesh = PCIP.CreateDefaultSubobject<UGeneratedMeshComponent>(this, TEXT("GeneratedMesh"));
+	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralMesh"));
 
 	// Apply a material
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));
@@ -15,47 +18,29 @@ AGameGeneratedActor::AGameGeneratedActor(const class FPostConstructInitializePro
 	// Contains the points describing the polyline we are going to rotate
 	TArray<FVector> points;
 
-	points.Add(FVector(200, 50, 0));
-	points.Add(FVector(150, 60, 0));
-	points.Add(FVector(120, 70, 0));
-	points.Add(FVector(110, 80, 0));
-	points.Add(FVector(80, 70, 0));
-	points.Add(FVector(70, 60, 0));
-	points.Add(FVector(40, 50, 0));
-	points.Add(FVector(30, 40, 0));
-	points.Add(FVector(20, 30, 0));
-	points.Add(FVector(10, 40, 0));
+	points.Add(FVector(190, 50, 0));
+	points.Add(FVector(140, 60, 0));
+	points.Add(FVector(110, 70, 0));
+	points.Add(FVector(100, 80, 0));
+	points.Add(FVector(70, 70, 0));
+	points.Add(FVector(50, 60, 0));
+	points.Add(FVector(30, 50, 0));
+	points.Add(FVector(20, 40, 0));
+	points.Add(FVector(10, 30, 0));
+	points.Add(FVector( 0, 40, 0));
 
-	TArray<FGeneratedMeshTriangle> triangles;
-
-	// Generate a lathe
+	// Generate a Lathe from rotating the given points
+	TArray<FProceduralMeshTriangle> triangles;
 	Lathe(points, triangles, 128);
-	// Generate a single triangle
-//	Triangle(triangles);
-
-	mesh->SetGeneratedMeshTriangles(triangles);
+	mesh->SetProceduralMeshTriangles(triangles);
 
 	RootComponent = mesh;
 }
 
-// Generate a single horizontal triangle counterclockwise to point up (invisible from the bottom)
-void AGameGeneratedActor::Triangle(TArray<FGeneratedMeshTriangle>& triangles)
-{
-	FGeneratedMeshTriangle triangle;
-	triangle.Vertex0.Position.Set(100.f, -80.f, -60.f);
-	triangle.Vertex1.Position.Set(100.f, 80.f, -30.f);
-	triangle.Vertex2.Position.Set(200.f, 0.f, 0.f);
-	static const FColor Blue(51, 51, 255);
-	triangle.Vertex0.Color = Blue;
-	triangle.Vertex1.Color = Blue;
-	triangle.Vertex2.Color = Blue;
-	triangles.Add(triangle);
-}
-
 // Generate a lathe by rotating the given polyline
-void AGameGeneratedActor::Lathe(const TArray<FVector>& points, TArray<FGeneratedMeshTriangle>& triangles, int segments)
+void AProceduralLatheActor::Lathe(const TArray<FVector>& points, TArray<FProceduralMeshTriangle>& triangles, int segments)
 {
-	UE_LOG(LogClass, Log, TEXT("AGameGeneratedActor::Lathe POINTS %d"), points.Num());
+	UE_LOG(LogClass, Log, TEXT("AProceduralLatheActor::Lathe POINTS %d"), points.Num());
 
 	TArray<FVector> verts;
 
@@ -94,7 +79,7 @@ void AGameGeneratedActor::Lathe(const TArray<FVector>& points, TArray<FGenerated
 	FVector p0(wp[0].X, 0, 0);
 	FVector pLast(wp[wp.Num() - 1].X, 0, 0);
 
-	FGeneratedMeshTriangle tri;
+	FProceduralMeshTriangle tri;
 	// for each segment draw the triangles clockwise for normals pointing out or counterclockwise for the opposite (this here does CW)
 	for(int segment = 0; segment<segments; segment++)
 	{

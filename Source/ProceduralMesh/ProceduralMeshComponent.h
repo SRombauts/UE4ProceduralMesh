@@ -4,20 +4,20 @@
 
 #pragma once
 
-#include "GeneratedMeshComponent.generated.h"
+#include "ProceduralMeshComponent.generated.h"
 
 USTRUCT(BlueprintType)
-struct FVertex
+struct FProceduralMeshVertex
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = Triangle)
+	UPROPERTY(EditAnywhere, Category=Triangle)
 	FVector Position;
 
-	UPROPERTY(EditAnywhere, Category = Triangle)
+	UPROPERTY(EditAnywhere, Category=Triangle)
 	FColor Color;
 
-	UPROPERTY(EditAnywhere, Category = Triangle)
+	UPROPERTY(EditAnywhere, Category=Triangle)
 	float U;
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
@@ -25,30 +25,30 @@ struct FVertex
 };
 
 USTRUCT(BlueprintType)
-struct FGeneratedMeshTriangle
+struct FProceduralMeshTriangle
 {
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVertex Vertex0;
+	FProceduralMeshVertex Vertex0;
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVertex Vertex1;
+	FProceduralMeshVertex Vertex1;
 
 	UPROPERTY(EditAnywhere, Category=Triangle)
-	FVertex Vertex2;
+	FProceduralMeshVertex Vertex2;
 };
 
 /** Component that allows you to specify custom triangle mesh geometry */
 UCLASS(editinlinenew, meta = (BlueprintSpawnableComponent), ClassGroup=Rendering)
-class UGeneratedMeshComponent : public UMeshComponent, public IInterface_CollisionDataProvider
+class UProceduralMeshComponent : public UMeshComponent, public IInterface_CollisionDataProvider
 {
 	GENERATED_UCLASS_BODY()
 
 public:
 	/** Set the geometry to use on this triangle mesh */
-	UFUNCTION(BlueprintCallable, Category="Components|GeneratedMesh")
-	bool SetGeneratedMeshTriangles(const TArray<FGeneratedMeshTriangle>& Triangles);
+	UFUNCTION(BlueprintCallable, Category="Components|ProceduralMesh")
+	bool SetProceduralMeshTriangles(const TArray<FProceduralMeshTriangle>& Triangles);
 
 	/** Description of collision */
 	UPROPERTY(BlueprintReadOnly, Category="Collision")
@@ -78,7 +78,7 @@ private:
 	// Begin USceneComponent interface.
 
 	/** */
-	TArray<FGeneratedMeshTriangle> GeneratedMeshTris;
+	TArray<FProceduralMeshTriangle> ProceduralMeshTris;
 
-	friend class FGeneratedMeshSceneProxy;
+	friend class FProceduralMeshSceneProxy;
 };
