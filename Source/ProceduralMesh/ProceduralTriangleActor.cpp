@@ -7,7 +7,7 @@
 AProceduralTriangleActor::AProceduralTriangleActor(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
-	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralMesh"));
+	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralTriangle"));
 
 	// Apply a simple material directly using the VertexColor as its BaseColor input
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("Material'/Game/Materials/BaseColor.BaseColor'"));
@@ -17,14 +17,14 @@ AProceduralTriangleActor::AProceduralTriangleActor(const class FPostConstructIni
 
 	// Generate a single triangle
 	TArray<FProceduralMeshTriangle> triangles;
-	Triangle(triangles);
+	GenerateTriangle(triangles);
 	mesh->SetProceduralMeshTriangles(triangles);
 
 	RootComponent = mesh;
 }
 
-// Generate a single horizontal triangle counterclockwise to point up (invisible from the bottom)
-void AProceduralTriangleActor::Triangle(TArray<FProceduralMeshTriangle>& triangles)
+// Generate a single horizontal triangle counterclockwise to point up (one face, visible only from the top, not from the bottom)
+void AProceduralTriangleActor::GenerateTriangle(TArray<FProceduralMeshTriangle>& OutTriangles)
 {
 	FProceduralMeshTriangle triangle;
 	triangle.Vertex0.Position.Set(  0.f, -80.f, 0.f);
@@ -40,5 +40,5 @@ void AProceduralTriangleActor::Triangle(TArray<FProceduralMeshTriangle>& triangl
 	triangle.Vertex1.V = 0.0f;
 	triangle.Vertex2.U = 0.5f;
 	triangle.Vertex2.V = 0.75f;
-	triangles.Add(triangle);
+	OutTriangles.Add(triangle);
 }

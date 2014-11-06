@@ -9,7 +9,7 @@
 AProceduralLatheActor::AProceduralLatheActor(const class FPostConstructInitializeProperties& PCIP)
 	: Super(PCIP)
 {
-	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralMesh"));
+	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralLathe"));
 
 	// Apply a material
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));
@@ -31,21 +31,21 @@ AProceduralLatheActor::AProceduralLatheActor(const class FPostConstructInitializ
 
 	// Generate a Lathe from rotating the given points
 	TArray<FProceduralMeshTriangle> triangles;
-	Lathe(points, triangles, 128);
+	GenerateLathe(points, 128, triangles);
 	mesh->SetProceduralMeshTriangles(triangles);
 
 	RootComponent = mesh;
 }
 
 // Generate a lathe by rotating the given polyline
-void AProceduralLatheActor::Lathe(const TArray<FVector>& points, TArray<FProceduralMeshTriangle>& triangles, int segments)
+void AProceduralLatheActor::GenerateLathe(const TArray<FVector>& InPoints, const int InSegments, TArray<FProceduralMeshTriangle>& OutTriangles)
 {
-	UE_LOG(LogClass, Log, TEXT("AProceduralLatheActor::Lathe POINTS %d"), points.Num());
+	UE_LOG(LogClass, Log, TEXT("AProceduralLatheActor::Lathe POINTS %d"), InPoints.Num());
 
 	TArray<FVector> verts;
 
 	// precompute some trig
-	float angle = FMath::DegreesToRadians(360.0f / segments);
+	float angle = FMath::DegreesToRadians(360.0f / InSegments);
 	float sinA = FMath::Sin(angle);
 	float cosA = FMath::Cos(angle);
 
@@ -70,21 +70,21 @@ void AProceduralLatheActor::Lathe(const TArray<FVector>& points, TArray<FProcedu
 
 	// Working point array, in which we keep the rotated line we draw with
 	TArray<FVector> wp;
-	for(int i = 0; i < points.Num(); i++)
+	for(int i = 0; i < InPoints.Num(); i++)
 	{
-		wp.Add(points[i]);
+		wp.Add(InPoints[i]);
 	}
 
-	// Add a first and last point on the axis to complete the triangles
+	// Add a first and last point on the axis to complete the OutTriangles
 	FVector p0(wp[0].X, 0, 0);
 	FVector pLast(wp[wp.Num() - 1].X, 0, 0);
 
 	FProceduralMeshTriangle tri;
-	// for each segment draw the triangles clockwise for normals pointing out or counterclockwise for the opposite (this here does CW)
-	for(int segment = 0; segment<segments; segment++)
+	// for each segment draw the OutTriangles clockwise for normals pointing out or counterclockwise for the opposite (this here does CW)
+	for(int segment = 0; segment<InSegments; segment++)
 	{
 
-		for(int i = 0; i<points.Num() - 1; i++)
+		for(int i = 0; i<InPoints.Num() - 1; i++)
 		{
 			FVector p1 = wp[i];
 			FVector p2 = wp[i + 1];
@@ -101,25 +101,25 @@ void AProceduralLatheActor::Lathe(const TArray<FVector>& points, TArray<FProcedu
 				tri.Vertex0.Position = p1;
 				tri.Vertex1.Position = p0;
 				tri.Vertex2.Position = p1r;
-				triangles.Add(tri);
+				OutTriangles.Add(tri);
 			}
 
 			tri.Vertex0.Position = p1;
 			tri.Vertex1.Position = p1r;
 			tri.Vertex2.Position = p2;
-			triangles.Add(tri);
+			OutTriangles.Add(tri);
 
 			tri.Vertex0.Position = p2;
 			tri.Vertex1.Position = p1r;
 			tri.Vertex2.Position = p2r;
-			triangles.Add(tri);
+			OutTriangles.Add(tri);
 
-			if(i == points.Num() - 2)
+			if(i == InPoints.Num() - 2)
 			{
 				tri.Vertex0.Position = p2;
 				tri.Vertex1.Position = p2r;
 				tri.Vertex2.Position = pLast;
-				triangles.Add(tri);
+				OutTriangles.Add(tri);
 				wp[i + 1] = p2r;
 			}
 

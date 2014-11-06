@@ -19,5 +19,5 @@ public:
 	UPROPERTY(VisibleAnywhere, Category=Materials)
 	TSubobjectPtr<UProceduralMeshComponent> mesh;
 
-	void Triangle(TArray<FProceduralMeshTriangle>& triangles);
+	void GenerateTriangle(TArray<FProceduralMeshTriangle>& OutTriangles);
 };

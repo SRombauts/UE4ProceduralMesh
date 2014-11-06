@@ -4,13 +4,13 @@
 
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
-#include "ProceduralLatheActor.generated.h"
+#include "ProceduralCubeActor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROCEDURALMESH_API AProceduralLatheActor : public AActor
+class PROCEDURALMESH_API AProceduralCubeActor : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
@@ -19,5 +19,5 @@ public:
 	UPROPERTY(VisibleAnywhere, Category=Materials)
 	TSubobjectPtr<UProceduralMeshComponent> mesh;
 
-	void GenerateLathe(const TArray<FVector>& InPoints, const int InSegments, TArray<FProceduralMeshTriangle>& OutTriangles);
+	void GenerateCube(const float& InSize, TArray<FProceduralMeshTriangle>& OutTriangles);
 };
