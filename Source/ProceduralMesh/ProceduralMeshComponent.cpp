@@ -23,7 +23,7 @@ public:
 #endif
 		// Copy the vertex data into the vertex buffer.
 		void* VertexBufferData = RHILockVertexBuffer(VertexBufferRHI, 0, Vertices.Num() * sizeof(FDynamicMeshVertex), RLM_WriteOnly);
-		FMemory::Memcpy(VertexBufferData, Vertices.GetTypedData(), Vertices.Num() * sizeof(FDynamicMeshVertex));
+		FMemory::Memcpy(VertexBufferData, Vertices.GetData(), Vertices.Num() * sizeof(FDynamicMeshVertex));
 		RHIUnlockVertexBuffer(VertexBufferRHI);
 	}
 };
@@ -44,7 +44,7 @@ public:
 #endif
 		// Write the indices to the index buffer.
 		void* Buffer = RHILockIndexBuffer(IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
-		FMemory::Memcpy(Buffer, Indices.GetTypedData(), Indices.Num() * sizeof(int32));
+		FMemory::Memcpy(Buffer, Indices.GetData(), Indices.Num() * sizeof(int32));
 		RHIUnlockIndexBuffer(IndexBufferRHI);
 	}
 };
@@ -92,7 +92,7 @@ public:
 	FProceduralMeshSceneProxy(UProceduralMeshComponent* Component)
 		: FPrimitiveSceneProxy(Component)
 #if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
-		, MaterialRelevance(Component->GetMaterialRelevance(GetScene()->GetFeatureLevel()))
+		, MaterialRelevance(Component->GetMaterialRelevance(GetScene().GetFeatureLevel()))
 #else
 		, MaterialRelevance(Component->GetMaterialRelevance())
 #endif
@@ -289,7 +289,7 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-UProceduralMeshComponent::UProceduralMeshComponent(const FPostConstructInitializeProperties& PCIP)
+UProceduralMeshComponent::UProceduralMeshComponent(const FObjectInitializer& PCIP)
 	: Super(PCIP)
 {
 	PrimaryComponentTick.bCanEverTick = false;
