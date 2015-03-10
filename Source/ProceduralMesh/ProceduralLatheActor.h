@@ -12,12 +12,14 @@
 UCLASS()
 class PROCEDURALMESH_API AProceduralLatheActor : public AActor
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	AProceduralLatheActor();
+
 	// Allow viewing/changing the Material ot the procedural Mesh in editor (if placed in a level at construction)
 	UPROPERTY(VisibleAnywhere, Category=Materials)
-	TSubobjectPtr<UProceduralMeshComponent> mesh;
+	UProceduralMeshComponent* mesh;
 
 	void GenerateLathe(const TArray<FVector>& InPoints, const int InSegments, TArray<FProceduralMeshTriangle>& OutTriangles);
 };

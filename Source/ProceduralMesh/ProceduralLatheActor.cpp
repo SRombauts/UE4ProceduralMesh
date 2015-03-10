@@ -6,10 +6,9 @@
 #include "ProceduralMesh.h"
 #include "ProceduralLatheActor.h"
 
-AProceduralLatheActor::AProceduralLatheActor(const class FPostConstructInitializeProperties& PCIP)
-	: Super(PCIP)
+AProceduralLatheActor::AProceduralLatheActor()
 {
-	mesh = PCIP.CreateDefaultSubobject<UProceduralMeshComponent>(this, TEXT("ProceduralLathe"));
+	mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralLathe"));
 
 	// Apply a material
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(TEXT("/Game/Materials/BaseColor.BaseColor"));

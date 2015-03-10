@@ -12,12 +12,14 @@
 UCLASS()
 class PROCEDURALMESH_API AProceduralCubeActor : public AActor
 {
-	GENERATED_UCLASS_BODY()
+	GENERATED_BODY()
 
 public:
+	AProceduralCubeActor();
+
 	// Allow viewing/changing the Material ot the procedural Mesh in editor (if placed in a level at construction)
 	UPROPERTY(VisibleAnywhere, Category=Materials)
-	TSubobjectPtr<UProceduralMeshComponent> mesh;
+	UProceduralMeshComponent* mesh;
 
 	void GenerateCube(const float& InSize, TArray<FProceduralMeshTriangle>& OutTriangles);
 };

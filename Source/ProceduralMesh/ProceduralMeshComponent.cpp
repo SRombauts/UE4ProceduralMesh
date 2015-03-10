@@ -105,9 +105,9 @@ public:
 			const FVector Edge01 = (Tri.Vertex1.Position - Tri.Vertex0.Position);
 			const FVector Edge02 = (Tri.Vertex2.Position - Tri.Vertex0.Position);
 
-			const FVector TangentX = Edge01.SafeNormal();
-			const FVector TangentZ = (Edge02 ^ Edge01).SafeNormal();
-			const FVector TangentY = (TangentX ^ TangentZ).SafeNormal();
+			const FVector TangentX = Edge01.GetSafeNormal();
+			const FVector TangentZ = (Edge02 ^ Edge01).GetSafeNormal();
+			const FVector TangentY = (TangentX ^ TangentZ).GetSafeNormal();
 
 			FDynamicMeshVertex Vert0;
 			Vert0.Position = Tri.Vertex0.Position;
