@@ -15,12 +15,8 @@ public:
 
 	virtual void InitRHI() override
 	{
-#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 3
 		FRHIResourceCreateInfo CreateInfo;
 		VertexBufferRHI = RHICreateVertexBuffer(Vertices.Num() * sizeof(FDynamicMeshVertex), BUF_Static, CreateInfo);
-#else
-		VertexBufferRHI = RHICreateVertexBuffer(Vertices.Num() * sizeof(FDynamicMeshVertex), NULL, BUF_Static);
-#endif
 		// Copy the vertex data into the vertex buffer.
 		void* VertexBufferData = RHILockVertexBuffer(VertexBufferRHI, 0, Vertices.Num() * sizeof(FDynamicMeshVertex), RLM_WriteOnly);
 		FMemory::Memcpy(VertexBufferData, Vertices.GetData(), Vertices.Num() * sizeof(FDynamicMeshVertex));
@@ -36,12 +32,8 @@ public:
 
 	virtual void InitRHI() override
 	{
-#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 3
 		FRHIResourceCreateInfo CreateInfo;
 		IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), Indices.Num() * sizeof(int32), BUF_Static, CreateInfo);
-#else
-		IndexBufferRHI = RHICreateIndexBuffer(sizeof(int32), Indices.Num() * sizeof(int32), NULL, BUF_Static);
-#endif
 		// Write the indices to the index buffer.
 		void* Buffer = RHILockIndexBuffer(IndexBufferRHI, 0, Indices.Num() * sizeof(int32), RLM_WriteOnly);
 		FMemory::Memcpy(Buffer, Indices.GetData(), Indices.Num() * sizeof(int32));
@@ -91,11 +83,7 @@ public:
 
 	FProceduralMeshSceneProxy(UProceduralMeshComponent* Component)
 		: FPrimitiveSceneProxy(Component)
-#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
 		, MaterialRelevance(Component->GetMaterialRelevance(GetScene().GetFeatureLevel()))
-#else
-		, MaterialRelevance(Component->GetMaterialRelevance())
-#endif
 	{
 		// Add each triangle to the vertex/index buffer
 		for(int TriIdx = 0; TriIdx<Component->ProceduralMeshTris.Num(); TriIdx++)
@@ -157,7 +145,6 @@ public:
 		VertexFactory.ReleaseResource();
 	}
 
-#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
     virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override
 	{
 		QUICK_SCOPE_CYCLE_COUNTER( STAT_ProceduralMeshSceneProxy_GetDynamicMeshElements );
@@ -206,7 +193,6 @@ public:
 			}
 		}
 	}
-#endif
 
 	virtual void DrawDynamicElements(FPrimitiveDrawInterface* PDI, const FSceneView* View)
 	{
@@ -236,11 +222,7 @@ public:
 		Mesh.bWireframe = bWireframe;
 		Mesh.VertexFactory = &VertexFactory;
 		Mesh.MaterialRenderProxy = MaterialProxy;
-#if ENGINE_MAJOR_VERSION >= 4 && ENGINE_MINOR_VERSION >= 5
 		BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true, UseEditorDepthTest());
-#else
-		BatchElement.PrimitiveUniformBuffer = CreatePrimitiveUniformBufferImmediate(GetLocalToWorld(), GetBounds(), GetLocalBounds(), true);
-#endif
 		BatchElement.FirstIndex = 0;
 		BatchElement.NumPrimitives = IndexBuffer.Indices.Num() / 3;
 		BatchElement.MinVertexIndex = 0;
@@ -289,8 +271,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-UProceduralMeshComponent::UProceduralMeshComponent(const FObjectInitializer& PCIP)
-	: Super(PCIP)
+UProceduralMeshComponent::UProceduralMeshComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
@@ -307,6 +289,22 @@ bool UProceduralMeshComponent::SetProceduralMeshTriangles(const TArray<FProcedur
 	MarkRenderStateDirty();
 
 	return true;
+}
+
+void UProceduralMeshComponent::AddProceduralMeshTriangles(const TArray<FProceduralMeshTriangle>& Triangles)
+{
+	ProceduralMeshTris.Append(Triangles);
+
+	// Need to recreate scene proxy to send it over
+	MarkRenderStateDirty();
+}
+
+void  UProceduralMeshComponent::ClearProceduralMeshTriangles()
+{
+	ProceduralMeshTris.Reset();
+
+	// Need to recreate scene proxy to send it over
+	MarkRenderStateDirty();
 }
 
 

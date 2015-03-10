@@ -50,6 +50,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Components|ProceduralMesh")
 	bool SetProceduralMeshTriangles(const TArray<FProceduralMeshTriangle>& Triangles);
 
+
+	/** Add to the geometry to use on this triangle mesh.  This may cause an allocation.  Use SetCustomMeshTriangles() instead when possible to reduce allocations. */
+	UFUNCTION(BlueprintCallable, Category="Components|ProceduralMesh")
+	void AddProceduralMeshTriangles(const TArray<FProceduralMeshTriangle>& Triangles);
+
+	/** Removes all geometry from this triangle mesh.  Does not deallocate memory, allowing new geometry to reuse the existing allocation. */
+	UFUNCTION(BlueprintCallable, Category="Components|ProceduralMesh")
+	void ClearProceduralMeshTriangles();
+
 	/** Description of collision */
 	UPROPERTY(BlueprintReadOnly, Category="Collision")
 	class UBodySetup* ModelBodySetup;
