@@ -3,6 +3,8 @@ UE4 Procedural Mesh
 
 [![Join the chat at https://gitter.im/SRombauts/UE4ProceduralMesh](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/SRombauts/UE4ProceduralMesh?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+Note: There is now à better alternative with the [Runtime Mesh Component plugin by Koderz (forum)](https://forums.unrealengine.com/showthread.php?113432-Runtime-Mesh-Component-Rendering-high-performance-runtime-generated-meshes), available [on Github (Koderz/UE4RuntimeMeshComponent)](https://github.com/Koderz/UE4RuntimeMeshComponent) and on [the Marketplace](https://www.unrealengine.com/marketplace/runtime-mesh-component)
+
 UE 4.7 Procedural MeshGeneration from the Epic Wiki, using C++ code and Blueprints
  
  - https://wiki.unrealengine.com/Procedural_Mesh_Generation
